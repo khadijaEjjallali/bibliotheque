@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LivreController;
 use App\Http\Controllers\AuteurController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MailController;
 
 // Routes des livres et des auteurs
 Route::resource('/Livres', LivreController::class);
@@ -18,3 +19,6 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/envoyer', [MailController::class, 'envoyer'])
+    ->middleware('auth')
+    ->name('mail.envoyer');
