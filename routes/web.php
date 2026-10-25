@@ -1,24 +1,29 @@
-
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LivreController;
 use App\Http\Controllers\AuteurController;
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MailController;
+use Illuminate\Support\Facades\Route;
 
-// Routes des livres et des auteurs
-Route::resource('/Livres', LivreController::class);
-Route::resource('/auteurs', AuteurController::class);
+Route::get('/', function () {
+    return view('welcome');
+});
 
-// Routes d'authentification
-Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-Route::post('/register', [AuthController::class, 'register']);
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-Route::post('/envoyer', [MailController::class, 'envoyer'])
-    ->middleware('auth')
-    ->name('mail.envoyer');
+    Route::resource('Livres', LivreController::class);
+    Route::resource('auteurs', AuteurController::class);
+
+    Route::post('/envoyer', [MailController::class, 'envoyer'])
+        ->name('mail.envoyer');
+});
+
+require __DIR__.'/auth.php';
